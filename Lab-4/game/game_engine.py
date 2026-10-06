@@ -5,7 +5,7 @@ from game.entities import Player, Enemy
 
 COLS, ROWS = 13, 11
 WIDTH = COLS * CELL
-HEIGHT = ROWS * CELL + 50
+HEIGHT = ROWS * CELL + 60
 FPS = 60
 
 class GameEngine:
@@ -40,6 +40,7 @@ class GameEngine:
         self.won = False
         self.start_ticks = pygame.time.get_ticks()
         self.speed_tier = 0
+        self.score = 0
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -49,6 +50,9 @@ class GameEngine:
 
     def update(self):
         if self.caught or self.won: return
+
+        # Survival score: +1 per frame while the game is running
+        self.score += 1
 
         # Difficulty ramp: every 15 seconds, enemies move faster
         elapsed = (pygame.time.get_ticks() - self.start_ticks) // 1000
@@ -94,12 +98,19 @@ class GameEngine:
         self.player.draw(self.screen)
         for enemy in self.enemies:
             enemy.draw(self.screen)
-        hud=pygame.Rect(0,ROWS*CELL,WIDTH,50)
+
+        # HUD (60px, two lines)
+        hud=pygame.Rect(0,ROWS*CELL,WIDTH,60)
         pygame.draw.rect(self.screen,(30,30,50),hud)
+        line1_y = ROWS*CELL + 6
+        line2_y = ROWS*CELL + 32
         info=self.font.render("Reach EXIT! R=Restart",True,(200,200,200))
-        self.screen.blit(info,(8,ROWS*CELL+14))
+        self.screen.blit(info,(8,line1_y))
         tier=self.font.render(f"Speed: Tier {self.speed_tier}",True,(240,200,80))
-        self.screen.blit(tier,(WIDTH-tier.get_width()-8,ROWS*CELL+14))
+        self.screen.blit(tier,(WIDTH-tier.get_width()-8,line1_y))
+        surv=self.font.render(f"Survived: {self.score // 60}s",True,(200,200,200))
+        self.screen.blit(surv,(8,line2_y))
+
         if self.caught:
             self._overlay("CAUGHT!", (220,60,60))
         if self.won:
@@ -112,8 +123,10 @@ class GameEngine:
         self.screen.blit(surf,(0,0))
         msg=self.big_font.render(text,True,color)
         sub=self.font.render("Press R to Restart",True,(200,200,200))
+        final=self.font.render(f"Final score: {self.score // 60}s",True,(200,200,200))
         self.screen.blit(msg,(WIDTH//2-msg.get_width()//2,ROWS*CELL//2-30))
         self.screen.blit(sub,(WIDTH//2-sub.get_width()//2,ROWS*CELL//2+20))
+        self.screen.blit(final,(WIDTH//2-final.get_width()//2,ROWS*CELL//2+50))
 
     def run(self):
         running=True
