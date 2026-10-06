@@ -59,8 +59,16 @@ class Enemy:
         self.color = color
         self.timer = 0
         self.move_interval = 20  # frames between cell moves
+        self.frozen = False
+        self.freeze_timer = 0
 
     def update(self, walls, player, rows, cols):
+        if self.frozen:
+            self.freeze_timer -= 1
+            if self.freeze_timer <= 0:
+                self.freeze_timer = 0
+                self.frozen = False
+            return
         from game.maze import bfs
         self.timer += 1
         if self.timer >= self.move_interval:
@@ -69,4 +77,16 @@ class Enemy:
             step = bfs(walls, (self.r, self.c), (pr, pc), rows, cols)
             if step:
                 dr, dc = step
-                self.r
+                self.r += dr; self.c += dc
+                cx, cy = self.c*CELL+CELL//2, self.r*CELL+CELL//2
+                self.rect.center = (cx, cy)
+
+    def draw(self, screen):
+        color = (120, 200, 255) if self.frozen else self.color
+        pygame.draw.rect(screen, color, self.rect, border_radius=5)
+        if self.frozen:
+            pygame.draw.rect(screen, (255, 255, 255), self.rect, width=2, border_radius=5)
+        # eyes
+        for ex in [self.rect.x+4, self.rect.x+14]:
+            pygame.draw.circle(screen, (255,255,255), (ex, self.rect.y+8), 4)
+            pygame.draw.circle(screen, (0,0,0), (ex+1, self.rect.y+8), 2)
