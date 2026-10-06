@@ -28,6 +28,8 @@ class GameEngine:
         self.exit_rect = pygame.Rect((COLS//2)*CELL+5, (ROWS//2)*CELL+5, CELL-10, CELL-10)
         self.caught = False
         self.won = False
+        self.start_ticks = pygame.time.get_ticks()
+        self.speed_tier = 0
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -37,6 +39,15 @@ class GameEngine:
 
     def update(self):
         if self.caught or self.won: return
+
+        # Difficulty ramp: every 15 seconds, enemies move faster
+        elapsed = (pygame.time.get_ticks() - self.start_ticks) // 1000
+        new_tier = elapsed // 15
+        if new_tier > self.speed_tier:
+            self.speed_tier = new_tier
+            for enemy in self.enemies:
+                enemy.move_interval = max(5, enemy.move_interval - 2)
+
         keys = pygame.key.get_pressed()
         self.player.move(keys, self.walls, ROWS, COLS)
         for enemy in self.enemies:
@@ -67,6 +78,8 @@ class GameEngine:
         pygame.draw.rect(self.screen,(30,30,50),hud)
         info=self.font.render("Reach EXIT! R=Restart",True,(200,200,200))
         self.screen.blit(info,(8,ROWS*CELL+14))
+        tier=self.font.render(f"Speed: Tier {self.speed_tier}",True,(240,200,80))
+        self.screen.blit(tier,(WIDTH-tier.get_width()-8,ROWS*CELL+14))
         if self.caught:
             self._overlay("CAUGHT!", (220,60,60))
         if self.won:
