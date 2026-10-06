@@ -52,11 +52,11 @@ class Player:
         pygame.draw.ellipse(screen, self.color, self.rect)
 
 class Enemy:
-    def __init__(self, r, c):
+    def __init__(self, r, c, color=(220, 60, 60)):
         self.r, self.c = r, c
         cx, cy = c*CELL+CELL//2, r*CELL+CELL//2
         self.rect = pygame.Rect(cx-12, cy-12, 24, 24)
-        self.color = (220, 60, 60)
+        self.color = color
         self.timer = 0
         self.move_interval = 20  # frames between cell moves
 
@@ -69,13 +69,4 @@ class Enemy:
             step = bfs(walls, (self.r, self.c), (pr, pc), rows, cols)
             if step:
                 dr, dc = step
-                self.r += dr; self.c += dc
-                cx, cy = self.c*CELL+CELL//2, self.r*CELL+CELL//2
-                self.rect.center = (cx, cy)
-
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect, border_radius=5)
-        # eyes
-        for ex in [self.rect.x+4, self.rect.x+14]:
-            pygame.draw.circle(screen, (255,255,255), (ex, self.rect.y+8), 4)
-            pygame.draw.circle(screen, (0,0,0), (ex+1, self.rect.y+8), 2)
+                self.r
