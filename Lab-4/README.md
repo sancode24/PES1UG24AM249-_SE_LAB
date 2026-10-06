@@ -66,6 +66,8 @@ maze-chase/
 
 ## Submission Checklist
 
+CHAT HISTORY LINK - https://claude.ai/share/f13219f7-4494-49b3-a4de-7ea26f2bc13e
+
 - [ ] All 4 tasks completed
 - [ ] Multiple enemies work independently
 - [ ] Power pellet freezes enemy correctly
