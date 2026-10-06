@@ -59,7 +59,7 @@ class GameEngine:
         self.enemy.draw(self.screen)
         hud=pygame.Rect(0,ROWS*CELL,WIDTH,50)
         pygame.draw.rect(self.screen,(30,30,50),hud)
-        info=self.font.render("Reach EXIT before the enemy catches you!  R=Restart",True,(200,200,200))
+        info=self.font.render("Reach EXIT! R=Restart",True,(200,200,200))
         self.screen.blit(info,(8,ROWS*CELL+14))
         if self.caught:
             self._overlay("CAUGHT!", (220,60,60))
