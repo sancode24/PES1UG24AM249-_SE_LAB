@@ -1,7 +1,10 @@
 import pygame
-from game.maze import CELL
+from game.maze import CELL, bfs
 
 SPEED = 2
+BASE_MOVE_INTERVAL = 20   # frames between enemy cell moves at tier 0
+MIN_MOVE_INTERVAL = 5     # fastest an enemy can get
+INTERVAL_STEP = 2         # frames removed per speed tier
 
 class Player:
     def __init__(self, r, c):
@@ -22,7 +25,7 @@ class Player:
         if self._valid(nr, walls, rows, cols): self.rect=nr
 
     def _valid(self, rect, walls, rows, cols):
-        # Bounds check (unchanged)
+        # Bounds check
         for px,py in [(rect.left,rect.top),(rect.right-1,rect.top),(rect.left,rect.bottom-1),(rect.right-1,rect.bottom-1)]:
             cr,cc=py//CELL,px//CELL
             if not(0<=cr<rows and 0<=cc<cols): return False
@@ -58,28 +61,39 @@ class Enemy:
         self.rect = pygame.Rect(cx-12, cy-12, 24, 24)
         self.color = color
         self.timer = 0
-        self.move_interval = 20  # frames between cell moves
+        self.move_interval = BASE_MOVE_INTERVAL
         self.frozen = False
         self.freeze_timer = 0
 
-    def update(self, walls, player, rows, cols):
+    def set_speed_tier(self, tier):
+        """Set move_interval for the given speed tier (idempotent)."""
+        self.move_interval = max(MIN_MOVE_INTERVAL, BASE_MOVE_INTERVAL - INTERVAL_STEP * tier)
+
+    def update(self, walls, player, rows, cols, occupied=()):
+        """occupied: set of (r, c) cells held by other enemies; we won't step into them."""
         if self.frozen:
             self.freeze_timer -= 1
             if self.freeze_timer <= 0:
                 self.freeze_timer = 0
                 self.frozen = False
             return
-        from game.maze import bfs
+
         self.timer += 1
-        if self.timer >= self.move_interval:
+        if self.timer < self.move_interval:
+            return
+
+        pr, pc = player.rect.centery//CELL, player.rect.centerx//CELL
+        step = bfs(walls, (self.r, self.c), (pr, pc), rows, cols)
+        if step is None:
             self.timer = 0
-            pr, pc = player.rect.centery//CELL, player.rect.centerx//CELL
-            step = bfs(walls, (self.r, self.c), (pr, pc), rows, cols)
-            if step:
-                dr, dc = step
-                self.r += dr; self.c += dc
-                cx, cy = self.c*CELL+CELL//2, self.r*CELL+CELL//2
-                self.rect.center = (cx, cy)
+            return
+        dr, dc = step
+        if (self.r + dr, self.c + dc) in occupied:
+            return  # blocked by another enemy: keep the timer and retry next frame
+        self.timer = 0
+        self.r += dr
+        self.c += dc
+        self.rect.center = (self.c*CELL+CELL//2, self.r*CELL+CELL//2)
 
     def draw(self, screen):
         color = (120, 200, 255) if self.frozen else self.color
