@@ -1,0 +1,31 @@
+************* Module scholarship_before
+/tmp/scholarship_before.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+/tmp/scholarship_before.py:12:0: C0116: Missing function or method docstring (missing-function-docstring)
+/tmp/scholarship_before.py:12:31: W0622: Redefining built-in 'credits' (redefined-builtin)
+/tmp/scholarship_before.py:13:11: W0123: Use of eval (eval-used)
+/tmp/scholarship_before.py:12:26: W0613: Unused argument 'gpa' (unused-argument)
+/tmp/scholarship_before.py:12:31: W0613: Unused argument 'credits' (unused-argument)
+/tmp/scholarship_before.py:15:0: C0116: Missing function or method docstring (missing-function-docstring)
+/tmp/scholarship_before.py:15:0: W0102: Dangerous default value [] as argument (dangerous-default-value)
+/tmp/scholarship_before.py:17:4: W0622: Redefining built-in 'credits' (redefined-builtin)
+/tmp/scholarship_before.py:22:16: C0209: Formatting a regular string which could be an f-string (consider-using-f-string)
+/tmp/scholarship_before.py:25:0: C0116: Missing function or method docstring (missing-function-docstring)
+/tmp/scholarship_before.py:26:4: W0603: Using the global statement (global-statement)
+/tmp/scholarship_before.py:29:0: C0116: Missing function or method docstring (missing-function-docstring)
+/tmp/scholarship_before.py:30:8: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+/tmp/scholarship_before.py:30:8: R1732: Consider using 'with' for resource-allocating operations (consider-using-with)
+/tmp/scholarship_before.py:34:0: C0116: Missing function or method docstring (missing-function-docstring)
+/tmp/scholarship_before.py:35:4: W0603: Using the global statement (global-statement)
+/tmp/scholarship_before.py:38:4: W0702: No exception type(s) specified (bare-except)
+/tmp/scholarship_before.py:37:29: R1732: Consider using 'with' for resource-allocating operations (consider-using-with)
+/tmp/scholarship_before.py:37:29: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+/tmp/scholarship_before.py:41:0: C0116: Missing function or method docstring (missing-function-docstring)
+/tmp/scholarship_before.py:41:0: C0103: Function name "printShortlist" doesn't conform to snake_case naming style (invalid-name)
+/tmp/scholarship_before.py:44:11: C0121: Comparison 'results[r]['eligible'] == True' should be 'results[r]['eligible'] is True' if checking for the singleton value True, or 'results[r]['eligible']' if testing for truthiness (singleton-comparison)
+/tmp/scholarship_before.py:47:0: C0116: Missing function or method docstring (missing-function-docstring)
+/tmp/scholarship_before.py:3:0: W0611: Unused import math (unused-import)
+/tmp/scholarship_before.py:4:0: W0611: Unused import sys (unused-import)
+
+-----------------------------------
+Your code has been rated at 4.69/10
+
