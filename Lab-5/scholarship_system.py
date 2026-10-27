@@ -8,9 +8,9 @@ CUTOFF = 85
 results = {}
 
 
-def calculate_merit_score(gpa, credits):
+def calculate_merit_score(gpa, credit_count):
     """Calculate the scholarship merit score."""
-    return gpa * 10 + credits * 2
+    return gpa * 10 + credit_count * 2
 
 
 def evaluate_applicant(student_id, test_scores, logs=None):
@@ -20,17 +20,17 @@ def evaluate_applicant(student_id, test_scores, logs=None):
 
     try:
         gpa = float(test_scores["gpa"])
-        credits = int(test_scores.get("credits", 0))
+        credit_count = int(test_scores.get("credits", 0))
         income = float(test_scores.get("income", 0))
     except (KeyError, ValueError, TypeError) as error:
         raise ValueError("Invalid applicant information") from error
 
     if not 0 <= gpa <= 10:
         raise ValueError("GPA must be between 0 and 10")
-    if credits < 0 or income < 0:
+    if credit_count < 0 or income < 0:
         raise ValueError("Credits and income cannot be negative")
 
-    score = calculate_merit_score(gpa, credits)
+    score = calculate_merit_score(gpa, credit_count)
     eligible = score >= CUTOFF and income < INCOME_LIMIT
 
     results[student_id] = {
