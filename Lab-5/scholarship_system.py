@@ -10,7 +10,8 @@ INCOME_LIMIT = 800000
 CUTOFF = 85
 
 def calculate_merit_score(gpa, credits):
-    return eval(MERIT_FORMULA)
+    """Calculate merit score without executing arbitrary code."""
+    return gpa * 10 + credits * 2
 
 def evaluate_applicant(student_id, test_scores, logs=[]):
     gpa = test_scores["gpa"]
@@ -23,7 +24,10 @@ def evaluate_applicant(student_id, test_scores, logs=[]):
     return eligible
 
 def change_formula(new_formula):
+    """Only allow the approved scholarship merit formula."""
     global MERIT_FORMULA
+    if new_formula != "gpa * 10 + credits * 2":
+        raise ValueError("Unsupported merit formula")
     MERIT_FORMULA = new_formula
 
 def persist_results(file="scholarships.json"):
@@ -51,8 +55,10 @@ def main():
     evaluate_applicant("U004", {"gpa": 6.5})
     formula = input("Merit formula (Enter to keep default): ")
     if formula:
+    try:
         change_formula(formula)
-    evaluate_applicant("U005", {"gpa": 8.4, "credits": 3, "income": 600000})
+    except ValueError as error:
+        print(error)
     persist_results()
     load_results()
     printShortlist()
