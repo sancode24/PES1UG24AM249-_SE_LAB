@@ -1,0 +1,28 @@
+name: Lab 7 Fuzz Testing
+
+on:
+  push:
+    paths:
+      - 'Lab7/**'
+      - '.github/workflows/lab7-fuzz.yml'
+  workflow_dispatch:
+
+jobs:
+  hypothesis-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Lab7
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install fuzz testing dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run Hypothesis tests
+        run: python -m pytest -v test_processor.py
+      - name: Run fixed program with valid inputs
+        run: printf '140:YES\n48/2.5\nCST_01\n' | python processor.py
