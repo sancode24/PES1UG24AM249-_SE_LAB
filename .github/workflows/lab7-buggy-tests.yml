@@ -1,0 +1,49 @@
+name: Lab 7 Buggy Tests (Before Fix)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  demonstrate-original-bugs:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Lab7
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install fuzz testing dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run original buggy application (expected failure)
+        shell: bash
+        run: |
+          set +e
+          printf 'abc\n' | python buggy_processor.py > buggy_output.txt 2>&1
+          status=$?
+          cat buggy_output.txt
+          echo "Original buggy application exit code: $status"
+          if [ "$status" -eq 0 ]; then
+            echo "ERROR: expected original program to fail for invalid input"
+            exit 1
+          fi
+          echo "EXPECTED FAILURE CONFIRMED: original application crashed on invalid input."
+      - name: Run fuzz tests against original buggy code (expected failures)
+        shell: bash
+        run: |
+          cp processor.py processor_fixed_backup.py
+          cp buggy_processor.py processor.py
+          set +e
+          python -m pytest -v test_processor.py > buggy_tests_output.txt 2>&1
+          status=$?
+          cat buggy_tests_output.txt
+          mv processor_fixed_backup.py processor.py
+          echo "Original buggy pytest exit code: $status"
+          if [ "$status" -eq 0 ]; then
+            echo "ERROR: expected at least one fuzz test to fail against original code"
+            exit 1
+          fi
+          echo "EXPECTED FAILURES CONFIRMED: Hypothesis detected bugs in the original program."
